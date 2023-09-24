@@ -1,19 +1,64 @@
 package com.hello.hello;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.intellij.lang.annotations.Pattern;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
+import java.net.URI;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/students")
+@Validated
 public class StudentsController {
+    private StudentList studentList;
 
-    @GetMapping("/students")
-    public List<Student> students() {
-        List<Student> students = List.of(
-                new Student("suzuki", "java", 1),
-                new Student("tanaka", "javascript", 3),
-                new Student("sakai", "python", 5));
-        return students;
+    public StudentsController() {
+        this.studentList = new StudentList();
+    }
+
+    @GetMapping("/ofAll")  //すべて取得
+    public StudentList getStudents() {
+        return studentList;
+    }
+
+    @GetMapping()   //クエリパラメータで指定したIDを取得
+    public StudentForm getStudents(@Validated @NotNull @Pattern("^[0-9]{6}$") @RequestParam(value = "studentId", required = false) String studentId) {
+        if (studentId == null) {
+            return null;
+        }
+        StudentForm studentForm = this.studentList.getStudentFormList().stream()
+                .filter(form -> form.getStudentId().equals(studentId))
+                .findFirst()
+                .orElse(null);
+        return studentForm;
+    }
+
+    @PostMapping("/creation/{studentId}")
+
+    public ResponseEntity<AlterResponse> create(@RequestBody @Validated StudentForm studentForm, UriComponentsBuilder uriComponentsBuilder) {
+        //登録処理省略
+        URI url = UriComponentsBuilder.fromUriString("http//localhost:8080")
+                .path("/creation/{studentId}")
+                .buildAndExpand(1)
+                .toUri();
+        return ResponseEntity.created(url).body(new AlterResponse("student successfully created"));
+    }
+
+    @PatchMapping("/updates/{studentId}")
+    public ResponseEntity<Map<String, String>> update(@PathVariable("studentId") int id,
+                                                      @RequestBody @NotNull StudentForm form) {
+        // 更新処理省略
+
+        return ResponseEntity.ok(Map.of("message", "studentId successfully updated"));
+    }
+
+    @DeleteMapping("/deletes/{studentId}")
+    public ResponseEntity<Map<String, String>> delete(@PathVariable("studentId") int id) {
+        // 削除処理省略
+        return ResponseEntity.ok(Map.of("message", "studentId successfully deleted"));
     }
 }
