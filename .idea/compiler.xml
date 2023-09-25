@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="hello.hello.main" target="17" />
-      <module name="hello.hello.test" target="17" />
+      <module name="hello.hello.main~1" target="17" />
+      <module name="hello.hello.test~1" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

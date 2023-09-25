@@ -1,28 +1,29 @@
 package com.hello.hello;
 
-import org.intellij.lang.annotations.Pattern;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
 public class StudentForm {
-    @NotNull
-    @Pattern("^[0-9]{6}$")
+
+    @Pattern(regexp = "^[0-9]{6}$")
     private String studentId;
 
-    @NotNull
+    @NotBlank
     private String name;
 
-    @NotNull
+    @NotBlank
     private String className;
 
-    @NotNull
-    private int gender;
+    @NotBlank
+    private String gender;
 
     @NotNull
     private LocalDate birthday;
 
-    public StudentForm(String studentId, String name, String className, int gender, LocalDate birthday) {
+    public StudentForm(String studentId, String name, String className, String gender, LocalDate birthday) {
         this.studentId = studentId;
         this.name = name;
         this.className = className;
@@ -42,7 +43,7 @@ public class StudentForm {
         return className;
     }
 
-    public int getGender() {
+    public String getGender() {
         return gender;
     }
 
@@ -63,7 +64,7 @@ public class StudentForm {
         this.className = className;
     }
 
-    public void setGender(int gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 

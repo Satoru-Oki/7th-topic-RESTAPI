@@ -1,7 +1,7 @@
 package com.hello.hello;
 
-import org.intellij.lang.annotations.Pattern;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +10,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("/students")
 @Validated
+
 public class StudentsController {
     private StudentList studentList;
 
@@ -26,7 +28,7 @@ public class StudentsController {
     }
 
     @GetMapping()   //クエリパラメータで指定したIDを取得
-    public StudentForm getStudents(@Validated @NotNull @Pattern("^[0-9]{6}$") @RequestParam(value = "studentId", required = false) String studentId) {
+    public StudentForm getStudents(@Validated @NotBlank @Pattern(regexp = "^[0-9]{6}$") @RequestParam(value = "studentId", required = false) String studentId) {
         if (studentId == null) {
             return null;
         }
@@ -38,7 +40,6 @@ public class StudentsController {
     }
 
     @PostMapping("/creation/{studentId}")
-
     public ResponseEntity<AlterResponse> create(@RequestBody @Validated StudentForm studentForm, UriComponentsBuilder uriComponentsBuilder) {
         //登録処理省略
         URI url = UriComponentsBuilder.fromUriString("http//localhost:8080")
@@ -50,7 +51,7 @@ public class StudentsController {
 
     @PatchMapping("/updates/{studentId}")
     public ResponseEntity<Map<String, String>> update(@PathVariable("studentId") int id,
-                                                      @RequestBody @NotNull StudentForm form) {
+                                                      @RequestBody @Validated StudentForm form) {
         // 更新処理省略
 
         return ResponseEntity.ok(Map.of("message", "studentId successfully updated"));
