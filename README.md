@@ -1,3 +1,9 @@
+#### 変更内容  
+GET処理でキー表示がでないようにStudentListClassを削除
+#### 動作確認
+<img width="296" alt="image" src="https://github.com/Satoru-Oki/7th-topic-RESTAPI/assets/143796169/b17234b9-19af-4683-ad4d-34c8cec09709">
+
+
 #### 概要
 REST-APIを実装するにあたってFieldに誕生日、GETメソッドでクエリ文字列を参照、Validationを設定した。
 #### 動作確認
