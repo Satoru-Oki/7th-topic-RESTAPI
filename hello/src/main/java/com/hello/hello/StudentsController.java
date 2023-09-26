@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 
@@ -16,15 +18,14 @@ import java.util.Map;
 @Validated
 
 public class StudentsController {
-    private StudentList studentList;
 
-    public StudentsController() {
-        this.studentList = new StudentList();
-    }
-
-    @GetMapping("/ofAll")  //すべて取得
-    public StudentList getStudents() {
-        return studentList;
+    @GetMapping("/allOf")  //すべて取得
+    public List<StudentForm> getStudents() {
+        List<StudentForm> allOf = List.of(
+                new StudentForm("381123", "suzuki", "java", "1", LocalDate.of(2015, 12, 11)),
+                new StudentForm("381221", "tanaka", "javascript", "0", LocalDate.of(2003, 3, 21)),
+                new StudentForm("372212", "sakai", "python", "1", LocalDate.of(1973, 7, 30)));
+        return allOf;
     }
 
     @GetMapping()   //クエリパラメータで指定したIDを取得
@@ -32,15 +33,17 @@ public class StudentsController {
         if (studentId == null) {
             return null;
         }
-        StudentForm studentForm = this.studentList.getStudentFormList().stream()
+        StudentForm studentList;
+        studentList = this.getStudents().stream()
                 .filter(form -> form.getStudentId().equals(studentId))
                 .findFirst()
                 .orElse(null);
-        return studentForm;
+        return studentList;
     }
 
     @PostMapping("/creation/{studentId}")
-    public ResponseEntity<AlterResponse> create(@RequestBody @Validated StudentForm studentForm, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<AlterResponse> create(@RequestBody @Validated StudentForm
+                                                        studentForm, UriComponentsBuilder uriComponentsBuilder) {
         //登録処理省略
         URI url = UriComponentsBuilder.fromUriString("http//localhost:8080")
                 .path("/creation/{studentId}")
