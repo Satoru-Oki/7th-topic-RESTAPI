@@ -28,11 +28,8 @@ public class StudentsController {
         return allOf;
     }
 
-    @GetMapping()   //クエリパラメータで指定したIDを取得
-    public StudentForm getStudents(@Validated @NotBlank @Pattern(regexp = "^[0-9]{6}$") @RequestParam(value = "studentId", required = false) String studentId) {
-        if (studentId == null) {
-            return null;
-        }
+    @GetMapping("/{studentId}")   //パスパラメータで指定したIDを取得
+    public StudentForm getStudents(@Validated @NotBlank @Pattern(regexp = "^[0-9]{6}$") @PathVariable String studentId) {
         StudentForm studentList;
         studentList = this.getStudents().stream()
                 .filter(form -> form.getStudentId().equals(studentId))
@@ -41,18 +38,28 @@ public class StudentsController {
         return studentList;
     }
 
-    @PostMapping("/creation/{studentId}")
+//    @GetMapping("/className")   //クエリパラメータで指定したIDを取得
+//    public StudentForm getStudents(@Validated @NotBlank @RequestParam(value = "className", required = false) String className) {
+//        StudentForm studentList;
+//        studentList = this.getStudents().stream()
+//                .filter(form -> form.getStudentId().equals(className))
+//                .findFirst()
+//                .orElse(null);
+//        return studentList;
+//    }
+
+    @PostMapping("/{studentId}")
     public ResponseEntity<AlterResponse> create(@RequestBody @Validated StudentForm
                                                         studentForm, UriComponentsBuilder uriComponentsBuilder) {
         //登録処理省略
         URI url = UriComponentsBuilder.fromUriString("http//localhost:8080")
-                .path("/creation/{studentId}")
+                .path("/{studentId}")
                 .buildAndExpand(1)
                 .toUri();
         return ResponseEntity.created(url).body(new AlterResponse("student successfully created"));
     }
 
-    @PatchMapping("/updates/{studentId}")
+    @PatchMapping("/{studentId}")
     public ResponseEntity<Map<String, String>> update(@PathVariable("studentId") int id,
                                                       @RequestBody @Validated StudentForm form) {
         // 更新処理省略
@@ -60,7 +67,7 @@ public class StudentsController {
         return ResponseEntity.ok(Map.of("message", "studentId successfully updated"));
     }
 
-    @DeleteMapping("/deletes/{studentId}")
+    @DeleteMapping("/{studentId}")
     public ResponseEntity<Map<String, String>> delete(@PathVariable("studentId") int id) {
         // 削除処理省略
         return ResponseEntity.ok(Map.of("message", "studentId successfully deleted"));
