@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 public class StudentForm {
-
     @Pattern(regexp = "^[0-9]{6}$")
+    @NotBlank
     private String studentId;
 
     @NotBlank
