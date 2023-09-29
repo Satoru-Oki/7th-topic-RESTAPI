@@ -12,47 +12,57 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/students")
 @Validated
-
 public class StudentsController {
 
     @GetMapping("/allOf")  //すべて取得
     public List<StudentForm> getStudents() {
         List<StudentForm> allOf = List.of(
-                new StudentForm("381123", "suzuki", "java", "1", LocalDate.of(2015, 12, 11)),
-                new StudentForm("381221", "tanaka", "javascript", "0", LocalDate.of(2003, 3, 21)),
-                new StudentForm("372212", "sakai", "python", "1", LocalDate.of(1973, 7, 30)));
+                new StudentForm("300001", "suzuki", "java", "1", LocalDate.of(2015, 12, 11)),
+                new StudentForm("300002", "tanaka", "javascript", "0", LocalDate.of(2003, 3, 21)),
+                new StudentForm("300003", "sakai", "python", "1", LocalDate.of(1973, 7, 30)));
         return allOf;
     }
 
-    @GetMapping()   //クエリパラメータで指定したIDを取得
-    public StudentForm getStudents(@Validated @NotBlank @Pattern(regexp = "^[0-9]{6}$") @RequestParam(value = "studentId", required = false) String studentId) {
-        if (studentId == null) {
-            return null;
-        }
-        StudentForm studentList;
-        studentList = this.getStudents().stream()
+    @GetMapping("/{studentId}")   //パスパラメータで指定したIDを取得
+    public StudentForm getStudents(@Validated @NotBlank @Pattern(regexp = "^[0-9]{6}$") @PathVariable String studentId) {
+        StudentForm studentList = this.getStudents().stream()
                 .filter(form -> form.getStudentId().equals(studentId))
                 .findFirst()
                 .orElse(null);
         return studentList;
     }
 
-    @PostMapping("/creation/{studentId}")
+    @GetMapping()   //クエリパラメータで指定したnameを取得
+    public String getStudentsName(@Validated @NotBlank @RequestParam(value = "name", required = false) String name) {
+        StudentForm studentList = this.getStudents().stream()
+                .filter(form -> form.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+        // クエリパラメータがnullの場合
+        if (studentList == null) {
+            return new String("入力された値は不適当です");
+        }
+        // クエリパラメータで指定されたnameが存在する場合
+        else {
+            return studentList.getName() + new String("さんようこそ！");
+        }
+    }
+
+    @PostMapping()
     public ResponseEntity<AlterResponse> create(@RequestBody @Validated StudentForm
                                                         studentForm, UriComponentsBuilder uriComponentsBuilder) {
         //登録処理省略
-        URI url = UriComponentsBuilder.fromUriString("http//localhost:8080")
-                .path("/creation/{studentId}")
+        URI uri = uriComponentsBuilder
+                .path("students/{studentId}")
                 .buildAndExpand(1)
                 .toUri();
-        return ResponseEntity.created(url).body(new AlterResponse("student successfully created"));
+        return ResponseEntity.created(uri).body(new AlterResponse("student successfully created"));
     }
 
-    @PatchMapping("/updates/{studentId}")
+    @PatchMapping()
     public ResponseEntity<Map<String, String>> update(@PathVariable("studentId") int id,
                                                       @RequestBody @Validated StudentForm form) {
         // 更新処理省略
@@ -60,7 +70,7 @@ public class StudentsController {
         return ResponseEntity.ok(Map.of("message", "studentId successfully updated"));
     }
 
-    @DeleteMapping("/deletes/{studentId}")
+    @DeleteMapping()
     public ResponseEntity<Map<String, String>> delete(@PathVariable("studentId") int id) {
         // 削除処理省略
         return ResponseEntity.ok(Map.of("message", "studentId successfully deleted"));
