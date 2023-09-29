@@ -51,7 +51,7 @@ public class StudentsController {
         }
     }
 
-    @PostMapping("/{studentsId}")
+    @PostMapping()
     public ResponseEntity<AlterResponse> create(@RequestBody @Validated StudentForm
                                                         studentForm, UriComponentsBuilder uriComponentsBuilder) {
         //登録処理省略
@@ -62,7 +62,7 @@ public class StudentsController {
         return ResponseEntity.created(uri).body(new AlterResponse("student successfully created"));
     }
 
-    @PatchMapping("/{studentId}")
+    @PatchMapping()
     public ResponseEntity<Map<String, String>> update(@PathVariable("studentId") int id,
                                                       @RequestBody @Validated StudentForm form) {
         // 更新処理省略
@@ -70,7 +70,7 @@ public class StudentsController {
         return ResponseEntity.ok(Map.of("message", "studentId successfully updated"));
     }
 
-    @DeleteMapping("/{studentId}")
+    @DeleteMapping()
     public ResponseEntity<Map<String, String>> delete(@PathVariable("studentId") int id) {
         // 削除処理省略
         return ResponseEntity.ok(Map.of("message", "studentId successfully deleted"));
